@@ -3,7 +3,6 @@ package com.sample.demothree.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String name;
     private String surname;
     private int age;
@@ -24,7 +24,16 @@ public class Author {
     private String phone;
     private String address;
 
-    @OneToMany
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Book> bookList = new ArrayList<>();
 
+    public void addBook(Book book) {
+        bookList.add(book);
+        book.setAuthor(this);
+    }
+
+    public void removeBook(Book book) {
+        bookList.remove(book);
+        book.setAuthor(null);
+    }
 }
